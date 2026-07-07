@@ -6,11 +6,15 @@ import hljs from 'highlight.js/lib/core'
 const pasteData = ref({ code: '', linenos: '' })
 
 async function getData(url: string): Promise<string> {
+  const not_found = 'Could not download paste'
   return fetch(url).then(async (response) => {
+    if (!response.ok) {
+      return not_found
+    }
     return response.text().then(async (data) => {
       return data
-    }, async () => { return 'Could not download paste'})
-  }, async () => { return 'Could not download paste'})
+    }, async () => { return not_found})
+  }, async () => { return not_found})
 }
 
 async function setData(data: string) {

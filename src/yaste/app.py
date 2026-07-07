@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 
 import logging
-from typing import TypedDict
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import PlainTextResponse
+from typing_extensions import TypedDict
 
 from .config import Config
 from .paste import Paste

@@ -40,17 +40,15 @@ onMounted(async () => {
     pasteServer = base
     pasteId = window.location.href.slice(base.length)
   } else if (window.location.pathname.startsWith(base)) {
-    pasteServer = `${window.location.origin}${base.replace(/^\/|\/$/g, '')}`
+    pasteServer = `${window.location.origin}${base}`
     pasteId = window.location.pathname.slice(base.length)
   }
-  /* Remove leading and trailing slashes */
-  pasteId = pasteId.replace(/^\/|\/$/g, '')
-
   console.log(`pasteId = ${pasteId}`)
   // Here this can be customized for split runtime
   // pasteServer = 'https://paste.yunohost.org'
 
-  const raw_url = `${pasteServer}/raw/${pasteId}`
+  // Sanitize url
+  const raw_url = `${pasteServer}/raw/${pasteId}`.replace(/([^:]\/)\/+/g, "$1");
   const data = pasteId != '' ? await getData(raw_url) : 'No paste requested'
   await setData(data)
 })

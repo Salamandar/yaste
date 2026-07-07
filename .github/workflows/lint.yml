@@ -1,0 +1,63 @@
+name: Lint code
+on:
+  pull_request:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  lint-python:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version:
+          - "3.11"
+          - "3.13"
+          - "3.14"
+    continue-on-error: true
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Setup Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v6
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+          pip-install: -e . --group dev ty
+
+      - name: Run Ruff check
+        if: '!cancelled()'
+        uses: astral-sh/ruff-action@v4.1.0
+
+      - name: Run mypy
+        if: '!cancelled()'
+        run: |
+          mypy --python-version ${{ matrix.python-version }} .
+
+      - name: Run ty
+        if: '!cancelled()'
+        run: |
+          ty check --python-version ${{ matrix.python-version }} .
+
+  lint-node:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+
+      - name: Install dependencies
+        run: bun --cwd=frontend install
+
+      - name: Run Bun lint
+        if: '!cancelled()'
+        run: bun --cwd=frontend run lint
+
+      - name: Run Bun build
+        if: '!cancelled()'
+        run: bun --cwd=frontend run build

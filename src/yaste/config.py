@@ -39,6 +39,10 @@ class Storage(CustomModel):
     compression: StorageCompression
 
 
+class Frontend(CustomModel):
+    path: Path = Path(__file__).parent.parent.parent / "frontend" / "dist"
+
+
 class Misc(CustomModel):
     testing: bool = False
     logging: bool = True
@@ -47,6 +51,7 @@ class Misc(CustomModel):
 class Config(CustomModel):
     server: Server
     storage: Storage
+    frontend: Frontend | None = None
     misc: Misc
 
 

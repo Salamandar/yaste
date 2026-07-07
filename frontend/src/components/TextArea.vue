@@ -78,4 +78,8 @@ onMounted(async () => {
   padding: 0.5em;
   user-select: none;
 }
+
+.hljs {
+  flex-basis: 100%;
+}
 </style>

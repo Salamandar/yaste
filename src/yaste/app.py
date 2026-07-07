@@ -19,6 +19,8 @@ def create_app(config: Config) -> FastAPI:
         config.storage.compression.level,
     )
 
+    app.frontend("/", directory="frontend/dist")
+
     class CreatePasteResponse(TypedDict):
         key: str
         url: str

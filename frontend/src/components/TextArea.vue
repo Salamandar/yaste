@@ -9,8 +9,8 @@ async function getData(url: string): Promise<string> {
   return fetch(url).then(async (response) => {
     return response.text().then(async (data) => {
       return data
-    })
-  })
+    }, async () => { return 'Could not download paste'})
+  }, async () => { return 'Could not download paste'})
 }
 
 async function setData(data: string) {
@@ -48,9 +48,13 @@ onMounted(async () => {
   // pasteServer = 'https://paste.yunohost.org'
 
   // Sanitize url
-  const raw_url = `${pasteServer}/raw/${pasteId}`.replace(/([^:]\/)\/+/g, "$1");
-  const data = pasteId != '' ? await getData(raw_url) : 'No paste requested'
-  await setData(data)
+  if (pasteId != '' && pasteId != '/') {
+    const raw_url = `${pasteServer}/raw/${pasteId}`.replace(/([^:]\/)\/+/g, "$1");
+    const data = await getData(raw_url)
+    await setData(data)
+  } else {
+    await setData('No paste requested')
+  }
 })
 </script>
 

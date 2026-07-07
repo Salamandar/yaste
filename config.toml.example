@@ -1,0 +1,17 @@
+[server]
+host = "127.0.0.1"
+port = 8001
+
+public_host = "https://yaste.org"
+
+[storage]
+path = "data/store"
+
+[storage.compression]
+enabled = true
+
+[misc]
+testing = true
+logging = true
+
+[frontend]

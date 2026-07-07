@@ -40,9 +40,11 @@ onMounted(async () => {
     pasteServer = base
     pasteId = window.location.href.slice(base.length)
   } else if (window.location.pathname.startsWith(base)) {
-    pasteServer = `${window.location.origin}${base}`
+    pasteServer = `${window.location.origin}${base.replace(/^\/|\/$/g, '')}`
     pasteId = window.location.pathname.slice(base.length)
   }
+  /* Remove leading and trailing slashes */
+  pasteId = pasteId.replace(/^\/|\/$/g, '')
 
   console.log(`pasteId = ${pasteId}`)
   // Here this can be customized for split runtime

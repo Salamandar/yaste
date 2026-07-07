@@ -32,12 +32,24 @@ async function setData(data: string) {
 }
 
 onMounted(async () => {
-  console.log(window.location)
-  const path = window.location.pathname
-  const origin = 'https://paste.yunohost.org' // window.location.origin
-  const raw_url = `${origin}/raw${window.location.pathname}`
+  const base = import.meta.env.BASE_URL
 
-  const data = path != '/' ? await getData(raw_url) : 'Could not download data'
+  let pasteId = ""
+  let pasteServer = ""
+  if (window.location.href.startsWith(base)) {
+    pasteServer = base
+    pasteId = window.location.href.slice(base.length)
+  } else if (window.location.pathname.startsWith(base)) {
+    pasteServer = `${window.location.origin}${base}`
+    pasteId = window.location.pathname.slice(base.length)
+  }
+
+  console.log(`pasteId = ${pasteId}`)
+  // Here this can be customized for split runtime
+  // pasteServer = 'https://paste.yunohost.org'
+
+  const raw_url = `${pasteServer}/raw/${pasteId}`
+  const data = pasteId != '' ? await getData(raw_url) : 'No paste requested'
   await setData(data)
 })
 </script>

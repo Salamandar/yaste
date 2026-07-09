@@ -46,7 +46,8 @@ def get_filters(filter_names: list[str]) -> dict[str, type[FilterType]]:
     all_filters = discover_filters()
     filters = {}
     for name in filter_names:
-        if not (the_filter := all_filters.get(name)):
+        the_filter = all_filters.get(name, all_filters.get(f"yaste.filters.{name}"))
+        if the_filter is None:
             raise RuntimeError(f"Could not find yaste filter {name}")
 
         filters[name] = the_filter

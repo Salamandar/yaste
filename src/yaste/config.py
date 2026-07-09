@@ -37,6 +37,7 @@ class StorageCompression(CustomModel):
 class Storage(CustomModel):
     path: Path
     compression: StorageCompression
+    filters: list[str] = []
 
 
 class Frontend(CustomModel):

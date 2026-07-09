@@ -17,6 +17,7 @@ def create_app(config: Config) -> FastAPI:
         config.storage.path,
         config.storage.compression.enabled,
         config.storage.compression.level,
+        config.storage.filters,
     )
 
     if config.frontend is not None:

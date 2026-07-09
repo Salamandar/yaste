@@ -34,7 +34,7 @@ def create_app(config: Config) -> FastAPI:
         data = await fastapi_req.body()
         logger.debug("Getting new paste of size %s", len(data))
         try:
-            key = paste.create(data.decode("utf-8"))
+            key = paste.create(data.decode("utf-8", errors="replace"))
         except FileExistsError:
             raise HTTPException(status_code=409, detail="Data already exists") from None
 

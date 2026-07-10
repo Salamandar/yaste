@@ -18,14 +18,14 @@ secret_keys_regex = (
 )
 operator_regex = "(?:\\s+\\-\\-value)?['\"]?\\s*(?:=|:|=>)\\s*"
 value_regex = "'(?:[^']|'\\''){5,}'|\\S{5,}"
-redact_regex = (
+redact_regex_str = (
     f"({secret_keys_regex})"
     f"{operator_regex}"
     "(?:'?-----BEGIN [A-Z]+ '?KEY-----)?"
     f"({value_regex})"
     "(?:'?-----END'? [A-Z]+ KEY-----'?)?"
 )
-redact_regex = re.compile(redact_regex)
+redact_regex = re.compile(redact_regex_str)
 exclude_keys = [
     "manifest_key",
     "bind_key_",

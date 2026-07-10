@@ -15,9 +15,7 @@ def key_of_data(data: str) -> str:
 
 
 class Paste:
-    def __init__(
-        self, path: Path, compress: bool, compress_level: int, filters: list[str]
-    ) -> None:
+    def __init__(self, path: Path, compress: bool, compress_level: int, filters: list[str]) -> None:
         self._path = path
         self._compress = compress
         self._compress_level = compress_level
@@ -58,9 +56,7 @@ class Paste:
 
         if self._compress:
             file = self._path / f"{key}.zst"
-            file.write_bytes(
-                zstandard.compress(data.encode("utf-8"), level=self._compress_level)
-            )
+            file.write_bytes(zstandard.compress(data.encode("utf-8"), level=self._compress_level))
         else:
             file = self._path / f"{key}.txt"
             file.write_text(data)

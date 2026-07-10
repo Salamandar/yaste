@@ -11,6 +11,10 @@ from .paste import Paste
 
 
 def create_app(config: Config) -> FastAPI:
+    logging.basicConfig()
+    if config.misc.logging and config.misc.testing:
+        logging.getLogger().setLevel(logging.DEBUG)
+
     logger = logging.getLogger()
     app = FastAPI(debug=config.misc.testing)
     paste = Paste(

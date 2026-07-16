@@ -9,7 +9,7 @@ authors = [
 ]
 urls.Repository = "https://github.com/yunohost/yaste"
 
-requires-python = ">=3.11"
+requires-python = ">=3.12"
 dependencies = [
     "fastapi",
     "pydantic",

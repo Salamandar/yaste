@@ -3,7 +3,7 @@
 import inspect
 import logging
 import re
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, override
 
 if TYPE_CHECKING:
     from collections.abc import Callable
@@ -154,9 +154,11 @@ def find_data_to_redact_in_line(line: str) -> str | None:
 
 
 class Filter(FilterType):
+    @override
     def fill(self, file: str) -> None:
         self.data = file
 
+    @override
     def acceptable(self) -> bool:
         return True
 
@@ -179,6 +181,7 @@ class Filter(FilterType):
                 # bash set -x display comparison like this: [[ ohno != \o\h\n\o ]]
                 self.data = self.data.replace("\\" + "\\".join(data), "**********")
 
+    @override
     def filtered(self) -> str:
         self._redact()
         return self.data

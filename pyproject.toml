@@ -57,6 +57,9 @@ lint.ignore = [
 [tool.ruff.lint.per-file-ignores]
 "tests/*" = ["D"]
 
+[tool.ty.rules]
+all = "error"
+
 [tool.mypy]
 strict = true
 follow_imports = "normal"

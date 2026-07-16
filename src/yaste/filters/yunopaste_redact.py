@@ -3,7 +3,10 @@
 import inspect
 import logging
 import re
-from collections.abc import Callable
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 from . import FilterType
 
@@ -95,21 +98,21 @@ def find_data_to_redact_in_line(line: str) -> str | None:
 
     redacting_tests: list[Callable[[str, str], bool]] = [
         # Empty string
-        lambda key, value: value == "",
+        lambda _key, value: value == "",
         # Some keys are false positive and should not be redacted
-        lambda key, value: key in exclude_keys,
+        lambda key, _value: key in exclude_keys,
         # Keys that end ups by uri, url or path are just path and not secret
-        lambda key, value: key.lower().endswith(exclude_keys_suffixes),
+        lambda key, _value: key.lower().endswith(exclude_keys_suffixes),
         # Python venv build could display some false positive library
         # like passlib or tokenizer
         # example: 'Collecting tokenizers==0.19.1'
-        lambda key, value: line.strip(" +").startswith(
-            ("Created serverSetting through seed key", "getent passwd ")
+        lambda _key, _value: line.strip(" +").startswith(
+            ("Created serverSetting through seed key", "getent passwd "),
         ),
         # Python venv build could display some false positive library
         # like passlib or tokenizer
         # example: 'Collecting tokenizers==0.19.1'
-        lambda key, value: (
+        lambda _key, value: (
             line.strip().startswith(("Collecting ", "Requirement already satisfied"))
             and value.startswith("=")
         ),
@@ -121,7 +124,7 @@ def find_data_to_redact_in_line(line: str) -> str | None:
         lambda key, value: (
             key == "key"
             and value.strip("'").startswith(
-                ("https://", "--key=https://", "http://", "--key=http://")
+                ("https://", "--key=https://", "http://", "--key=http://"),
             )
         ),
         lambda key, value: key == "pwd_output" and value.startswith("/var/cache/yunohost/"),
@@ -129,7 +132,7 @@ def find_data_to_redact_in_line(line: str) -> str | None:
         lambda key, value: key == "ssh_keys" and "/etc/ssh/ssh_host_" in value,
         lambda key, value: key == "public_key" and value.startswith("ssh-"),
         lambda key, value: key == "AUTH_KEYS" and value == "/root/.ssh/authorized_keys",
-        lambda key, value: key == "password" and "--password= --database=" in line,
+        lambda key, _value: key == "password" and "--password= --database=" in line,
     ]
 
     for test in redacting_tests:

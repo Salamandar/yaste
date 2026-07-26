@@ -2,20 +2,9 @@
 import { ref, onMounted } from 'vue'
 import '../assets/solarized_dark.css'
 import hljs from 'highlight.js/lib/core'
+import { getRawPasteUrl, getRawData } from './api'
 
 const pasteData = ref({ code: '', linenos: '' })
-
-async function getData(url: string): Promise<string> {
-  const not_found = 'Could not download paste'
-  return fetch(url).then(async (response) => {
-    if (!response.ok) {
-      return not_found
-    }
-    return response.text().then(async (data) => {
-      return data
-    }, async () => { return not_found})
-  }, async () => { return not_found})
-}
 
 async function setData(data: string) {
   if (data.slice(-1) != '\n') {
@@ -36,25 +25,9 @@ async function setData(data: string) {
 }
 
 onMounted(async () => {
-  const base = import.meta.env.BASE_URL
-
-  let pasteId = ""
-  let pasteServer = ""
-  if (window.location.href.startsWith(base)) {
-    pasteServer = base
-    pasteId = window.location.href.slice(base.length)
-  } else if (window.location.pathname.startsWith(base)) {
-    pasteServer = `${window.location.origin}${base}`
-    pasteId = window.location.pathname.slice(base.length)
-  }
-  console.log(`pasteId = ${pasteId}`)
-  // Here this can be customized for split runtime
-  // pasteServer = 'https://paste.yunohost.org'
-
-  // Sanitize url
-  if (pasteId != '' && pasteId != '/') {
-    const raw_url = `${pasteServer}/raw/${pasteId}`.replace(/([^:]\/)\/+/g, "$1");
-    const data = await getData(raw_url)
+  const rawPasteUrl = getRawPasteUrl()
+  if (rawPasteUrl) {
+    const data = await getRawData(rawPasteUrl)
     await setData(data)
   } else {
     await setData('No paste requested')

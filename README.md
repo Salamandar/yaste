@@ -17,6 +17,14 @@ Install and run with `uv`:
 YASTE_CONFIG=./config.toml uv run yaste
 ```
 
+### Push a file
+
+With the development url:
+
+```bash
+curl -X POST http://localhost:8001/create --data-binary '@your_file'
+```
+
 ## Frontend
 
 Build the frontend with `bun`:
@@ -31,3 +39,12 @@ And reference the path of the `dist` directory in the `config.toml`:
 ```toml
 [frontend]
 path = "./frontend/dist"
+```
+
+### Development
+
+If you want to run the development server, you can give the python API server url:
+
+```bash
+VITE_API_SERVER=http://localhost:8001 bun --cwd=frontend run dev
+```

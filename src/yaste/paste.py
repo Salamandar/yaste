@@ -35,6 +35,7 @@ class Paste:
         self._compress = compress
         self._compress_level = compress_level
         self.filters = get_filters(filters)
+        self._path.mkdir(parents=False, exist_ok=True)
 
     def search(self, key: str) -> Path | None:
         if (path := self._path / f"{key}.zst").exists():

@@ -18,6 +18,7 @@
 import logging
 
 from fastapi import FastAPI, HTTPException, Request
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import PlainTextResponse
 from typing_extensions import TypedDict
 
@@ -32,6 +33,15 @@ def create_app(config: Config) -> FastAPI:
 
     logger = logging.getLogger()
     app = FastAPI(debug=config.misc.testing)
+    if config.misc.testing:
+        app.add_middleware(
+            CORSMiddleware,
+            allow_credentials=True,
+            allow_methods=["*"],
+            allow_headers=["*"],
+            allow_origins=["*"],
+        )
+
     paste = Paste(
         config.storage.path,
         config.storage.compression.enabled,

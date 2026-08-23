@@ -27,24 +27,23 @@ export function getRawPasteUrl(): string | null {
   return null
 }
 
-export async function getRawData(url: string): Promise<string> {
-  const not_found = 'Could not download paste'
+export async function getRawData(url: string): Promise<string | null> {
   return fetch(url).then(
     async (response) => {
       if (!response.ok) {
-        return not_found
+        return null
       }
       return response.text().then(
         async (data) => {
           return data
         },
         async () => {
-          return not_found
+          return null
         },
       )
     },
     async () => {
-      return not_found
+      return null
     },
   )
 }

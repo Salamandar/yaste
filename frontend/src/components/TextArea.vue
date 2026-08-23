@@ -26,12 +26,16 @@ async function setData(data: string) {
 
 onMounted(async () => {
   const rawPasteUrl = getRawPasteUrl()
-  if (rawPasteUrl) {
-    const data = await getRawData(rawPasteUrl)
-    await setData(data)
-  } else {
+  if (rawPasteUrl == null) {
     await setData('No paste requested')
+    return
   }
+  const data = await getRawData(rawPasteUrl)
+  if (data == null) {
+    await setData('Could not download paste')
+    return
+  }
+  await setData(data)
 })
 </script>
 

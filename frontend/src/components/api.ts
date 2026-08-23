@@ -1,4 +1,4 @@
-export function getRawPasteUrl(): string | null {
+export function getRawPasteUrl(): [string | null, string | null] {
   const base = import.meta.env.BASE_URL
 
   let pasteServer = ''
@@ -20,11 +20,15 @@ export function getRawPasteUrl(): string | null {
   // pasteServer = 'https://paste.yunohost.org'
 
   // Sanitize url
-  if (pasteId != '' && pasteId != '/') {
-    const raw_url = `${pasteServer}/raw/${pasteId}`.replace(/([^:]\/)\/+/g, '$1')
-    return raw_url
+  if (pasteId == '' || pasteId == '/') {
+    return [null, null]
   }
-  return null
+  const extension = pasteId.includes('.') ? pasteId.split('.').pop() || '' : ''
+  pasteId = pasteId.replace(/\.[^/.]+$/, '')
+  console.log(pasteId, extension)
+
+  const raw_url = `${pasteServer}/raw/${pasteId}`.replace(/([^:]\/)\/+/g, '$1')
+  return [raw_url, extension]
 }
 
 export async function getRawData(url: string): Promise<string | null> {

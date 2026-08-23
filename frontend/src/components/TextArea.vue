@@ -27,7 +27,7 @@ async function setData(data: string, language: string) {
 }
 
 onMounted(async () => {
-  const rawPasteUrl = getRawPasteUrl()
+  const [rawPasteUrl, extension] = getRawPasteUrl()
   if (rawPasteUrl == null) {
     await setData('No paste requested', 'plaintext')
     return
@@ -37,8 +37,7 @@ onMounted(async () => {
     await setData('Could not download paste', 'plaintext')
     return
   }
-  const extension = (rawPasteUrl.split("/").pop() || "").split(".").pop() || 'plaintext'
-  await setData(data, extension)
+  await setData(data, extension || 'plaintext')
 })
 </script>
 

@@ -51,3 +51,39 @@ export async function getRawData(url: string): Promise<string | null> {
     },
   )
 }
+
+export async function pushRawData(data: string): Promise<string | null> {
+  const base = import.meta.env.BASE_URL
+  let pasteServer = ''
+  if (window.location.href.startsWith(base)) {
+    pasteServer = base
+  } else if (window.location.pathname.startsWith(base)) {
+    pasteServer = `${window.location.origin}${base}`
+  }
+  const envPasteServer = import.meta.env.VITE_API_SERVER
+  if (envPasteServer !== undefined && envPasteServer !== '') {
+    pasteServer = envPasteServer
+  }
+
+  return fetch(`${pasteServer.replace(/\/$/, '')}/create`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'media-type',
+    },
+    body: data,
+  }).then(
+    async (response) => {
+      return response.json().then(
+        async (data) => {
+          return data['url']
+        },
+        async () => {
+          return null
+        },
+      )
+    },
+    async () => {
+      return null
+    },
+  )
+}

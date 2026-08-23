@@ -2,9 +2,10 @@
 import { ref, onMounted } from 'vue'
 import '../assets/solarized_dark.css'
 import hljs from 'highlight.js/lib/core'
-import { getRawPasteUrl, getRawData } from './api'
+import { getRawPasteUrl, getRawData, pushRawData } from './api'
 
-const pasteData = ref({ code: '', linenos: '' })
+const pasteData = ref({ code: '', linenos: '', editable: false })
+const textValue = ref('')
 
 async function setData(data: string, language: string) {
   if (data.slice(-1) != '\n') {
@@ -23,14 +24,39 @@ async function setData(data: string, language: string) {
   pasteData.value = {
     code: highlighted.value,
     linenos: linenos,
+    editable: false,
+  }
+}
+
+async function setEditable() {
+  pasteData.value = {
+    code: '',
+    linenos: '>',
+    editable: true,
+  }
+}
+async function savePaste() {
+  if (textValue.value == '') {
+    return
+  }
+  // Try to detect the file type...
+  let ext = ''
+  const highlighted = hljs.highlightAuto(textValue.value)
+  if (highlighted.language != null) {
+    const lang = hljs.getLanguage(highlighted.language)?.aliases?.at(0)
+    ext = `.${lang}`
+  }
+  const pasteUrl = await pushRawData(textValue.value)
+  if (pasteUrl != null) {
+    console.log(pasteUrl)
+    window.location.href = pasteUrl + ext
   }
 }
 
 onMounted(async () => {
   const [rawPasteUrl, extension] = getRawPasteUrl()
   if (rawPasteUrl == null) {
-    await setData('No paste requested', 'plaintext')
-    return
+    return await setEditable()
   }
   const data = await getRawData(rawPasteUrl)
   if (data == null) {
@@ -44,7 +70,15 @@ onMounted(async () => {
 <template>
   <div class="codezone" ref="codezone">
     <div class="linenos hljs-comment" v-html="pasteData.linenos" />
-    <pre class="hljs" v-html="pasteData.code" />
+    <pre class="hljs" v-html="pasteData.code" v-if="!pasteData.editable" />
+    <textarea
+      class="hljs"
+      spellcheck="false"
+      placeholder="Paste your data here and ctrl-s"
+      v-model="textValue"
+      v-if="pasteData.editable"
+      @keydown.ctrl.s.prevent="savePaste"
+    />
   </div>
 </template>
 
@@ -68,5 +102,11 @@ onMounted(async () => {
 
 .hljs {
   flex-basis: 100%;
+}
+
+.codezone textarea {
+  font-size: 13px;
+  border: none;
+  outline: none;
 }
 </style>

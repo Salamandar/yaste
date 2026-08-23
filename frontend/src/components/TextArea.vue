@@ -17,7 +17,7 @@ async function setData(data: string, language: string) {
 
   const linecount = data.split('\n').length
   let linenos = ''
-  for (let i = 1; i < linecount; i++) {
+  for (let i = 1; i < linecount + 1; i++) {
     linenos += `${i}<br/>`
   }
   pasteData.value = {

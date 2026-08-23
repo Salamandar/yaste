@@ -6,11 +6,13 @@ import { getRawPasteUrl, getRawData } from './api'
 
 const pasteData = ref({ code: '', linenos: '' })
 
-async function setData(data: string) {
+async function setData(data: string, language: string) {
   if (data.slice(-1) != '\n') {
     data = data + '\n'
   }
-  const highlighted = hljs.highlight(data, { language: 'yaml' })
+
+  language = hljs.getLanguage(language) == undefined ? 'plaintext' : language
+  const highlighted = hljs.highlight(data, { language: language })
   // const highlighted = hljs.highlightAuto(data);
 
   const linecount = data.split('\n').length
@@ -27,15 +29,16 @@ async function setData(data: string) {
 onMounted(async () => {
   const rawPasteUrl = getRawPasteUrl()
   if (rawPasteUrl == null) {
-    await setData('No paste requested')
+    await setData('No paste requested', 'plaintext')
     return
   }
   const data = await getRawData(rawPasteUrl)
   if (data == null) {
-    await setData('Could not download paste')
+    await setData('Could not download paste', 'plaintext')
     return
   }
-  await setData(data)
+  const extension = (rawPasteUrl.split("/").pop() || "").split(".").pop() || 'plaintext'
+  await setData(data, extension)
 })
 </script>
 

@@ -80,11 +80,18 @@ def create_app(config: Config) -> FastAPI:
             raise HTTPException(status_code=404, detail="Item does not exist") from None
         return PlainTextResponse(paste.read(path))
 
-    @app.get("/{_item}")
-    async def any_to_frontend(_item: str) -> HTMLResponse:
-        """This is a fallback so that a random URL "redirects" to the frontend."""
-        if config.frontend is None:
-            raise HTTPException(status_code=404, detail="Frontend not available") from None
-        return HTMLResponse((config.frontend.path / "index.html").read_text())
+    # @app.get("/favicon.png")
+    # async def favicon() -> bytes:
+    #     """This is a fallback so that a random URL "redirects" to the frontend."""
+    #     if config.frontend is None:
+    #         raise HTTPException(status_code=404, detail="Frontend not available") from None
+    #     return Response((config.frontend.path / "favicon.png").read_bytes())
+
+    # @app.get("/{_item}")
+    # async def any_to_frontend(_item: str) -> HTMLResponse:
+    #     """This is a fallback so that a random URL "redirects" to the frontend."""
+    #     if config.frontend is None:
+    #         raise HTTPException(status_code=404, detail="Frontend not available") from None
+    #     return HTMLResponse((config.frontend.path / "index.html").read_text())
 
     return app
